@@ -24,11 +24,3 @@ Sistema orientado a objetos para la gestión integral de una clínica veterinari
   - Agregación y Asociaciones
   - Listas Dinámicas (`List<T>` / `ArrayList`)
 
----
-
-## 🚀 Cómo ejecutar la versión interactiva en C#
-
-1. Abre tu terminal (CMD o PowerShell) en la carpeta raíz del proyecto.
-2. Navega hasta la carpeta de C#:
-   ```cmd
-   cd Clases_Csharp

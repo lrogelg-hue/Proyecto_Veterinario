@@ -1,0 +1,10 @@
+#BlueJ class context
+#Sat Sep 19 23:08:10 CST 2026
+comment0.target=Consulta
+comment1.params=idConsulta fecha peso temperatura sintomas diagnostico farmaco dosis frecuencia
+comment1.target=Consulta(java.lang.String, java.lang.String, double, double, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+comment2.target=void mostrarResumen()
+comment3.target=java.lang.String getIdConsulta()
+comment4.target=java.lang.String getFecha()
+comment5.target=java.lang.String getDiagnostico()
+numComments=6

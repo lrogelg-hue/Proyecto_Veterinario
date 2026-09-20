@@ -1,0 +1,8 @@
+#BlueJ class context
+#Sat Sep 19 23:08:10 CST 2026
+comment0.target=GestorReportes
+comment1.params=citas
+comment1.target=void generarReporteCitas(java.util.ArrayList)
+comment2.params=inventario limiteMinimo
+comment2.target=void generarReporteInventarioBajo(java.util.ArrayList, int)
+numComments=3

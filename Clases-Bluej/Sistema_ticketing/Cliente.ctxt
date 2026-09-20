@@ -1,0 +1,13 @@
+#BlueJ class context
+#Sat Sep 19 23:08:10 CST 2026
+comment0.target=Cliente
+comment1.params=idCliente nombre telefono direccion
+comment1.target=Cliente(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+comment2.params=mascota
+comment2.target=void agregarMascota(Mascota)
+comment3.target=java.lang.String getIdCliente()
+comment4.target=java.lang.String getNombre()
+comment5.target=java.lang.String getTelefono()
+comment6.target=java.lang.String getDireccion()
+comment7.target=java.util.ArrayList getMascotas()
+numComments=8

@@ -1,0 +1,14 @@
+C:\Users\eg270\Documents\Progra2\Proyecto_veterinaria\Clases_Csharp\bin\Debug\net10.0\Clases_Csharp.exe
+C:\Users\eg270\Documents\Progra2\Proyecto_veterinaria\Clases_Csharp\bin\Debug\net10.0\Clases_Csharp.deps.json
+C:\Users\eg270\Documents\Progra2\Proyecto_veterinaria\Clases_Csharp\bin\Debug\net10.0\Clases_Csharp.runtimeconfig.json
+C:\Users\eg270\Documents\Progra2\Proyecto_veterinaria\Clases_Csharp\bin\Debug\net10.0\Clases_Csharp.dll
+C:\Users\eg270\Documents\Progra2\Proyecto_veterinaria\Clases_Csharp\bin\Debug\net10.0\Clases_Csharp.pdb
+C:\Users\eg270\Documents\Progra2\Proyecto_veterinaria\Clases_Csharp\obj\Debug\net10.0\Clases_Csharp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\eg270\Documents\Progra2\Proyecto_veterinaria\Clases_Csharp\obj\Debug\net10.0\Clases_Csharp.AssemblyInfoInputs.cache
+C:\Users\eg270\Documents\Progra2\Proyecto_veterinaria\Clases_Csharp\obj\Debug\net10.0\Clases_Csharp.AssemblyInfo.cs
+C:\Users\eg270\Documents\Progra2\Proyecto_veterinaria\Clases_Csharp\obj\Debug\net10.0\Clases_Csharp.csproj.CoreCompileInputs.cache
+C:\Users\eg270\Documents\Progra2\Proyecto_veterinaria\Clases_Csharp\obj\Debug\net10.0\Clases_Csharp.dll
+C:\Users\eg270\Documents\Progra2\Proyecto_veterinaria\Clases_Csharp\obj\Debug\net10.0\refint\Clases_Csharp.dll
+C:\Users\eg270\Documents\Progra2\Proyecto_veterinaria\Clases_Csharp\obj\Debug\net10.0\Clases_Csharp.pdb
+C:\Users\eg270\Documents\Progra2\Proyecto_veterinaria\Clases_Csharp\obj\Debug\net10.0\Clases_Csharp.genruntimeconfig.cache
+C:\Users\eg270\Documents\Progra2\Proyecto_veterinaria\Clases_Csharp\obj\Debug\net10.0\ref\Clases_Csharp.dll

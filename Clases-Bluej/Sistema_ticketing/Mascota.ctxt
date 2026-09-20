@@ -1,0 +1,14 @@
+#BlueJ class context
+#Sat Sep 19 23:08:10 CST 2026
+comment0.target=Mascota
+comment1.params=idMascota nombre especie raza edad
+comment1.target=Mascota(java.lang.String, java.lang.String, java.lang.String, java.lang.String, int)
+comment2.params=consulta
+comment2.target=void agregarConsulta(Consulta)
+comment3.target=java.lang.String getIdMascota()
+comment4.target=java.lang.String getNombre()
+comment5.target=java.lang.String getEspecie()
+comment6.target=java.lang.String getRaza()
+comment7.target=int getEdad()
+comment8.target=java.util.ArrayList getHistorialClinico()
+numComments=9

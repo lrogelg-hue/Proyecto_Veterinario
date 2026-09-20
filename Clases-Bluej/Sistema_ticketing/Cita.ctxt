@@ -1,0 +1,12 @@
+#BlueJ class context
+#Sat Sep 19 23:08:10 CST 2026
+comment0.target=Cita
+comment1.params=idCita fecha hora mascota veterinario
+comment1.target=Cita(java.lang.String, java.lang.String, java.lang.String, Mascota, Veterinario)
+comment2.target=java.lang.String getIdCita()
+comment3.target=java.lang.String getFecha()
+comment4.target=java.lang.String getHora()
+comment5.target=Mascota getMascota()
+comment6.target=Veterinario getVeterinario()
+comment7.target=boolean isOcupado()
+numComments=8

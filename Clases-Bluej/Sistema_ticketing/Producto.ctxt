@@ -1,0 +1,14 @@
+#BlueJ class context
+#Sat Sep 19 23:08:10 CST 2026
+comment0.target=Producto
+comment1.params=idProducto nombre cantidadStock precioUnitario
+comment1.target=Producto(java.lang.String, java.lang.String, int, double)
+comment2.params=cantidad
+comment2.target=void reabastecer(int)
+comment3.params=cantidad
+comment3.target=boolean reducirStock(int)
+comment4.target=java.lang.String getIdProducto()
+comment5.target=java.lang.String getNombre()
+comment6.target=int getCantidadStock()
+comment7.target=double getPrecioUnitario()
+numComments=8

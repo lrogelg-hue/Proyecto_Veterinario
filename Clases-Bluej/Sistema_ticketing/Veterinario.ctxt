@@ -1,0 +1,9 @@
+#BlueJ class context
+#Sat Sep 19 23:08:10 CST 2026
+comment0.target=Veterinario
+comment1.params=idVeterinario nombre especialidad
+comment1.target=Veterinario(java.lang.String, java.lang.String, java.lang.String)
+comment2.target=java.lang.String getIdVeterinario()
+comment3.target=java.lang.String getNombre()
+comment4.target=java.lang.String getEspecialidad()
+numComments=5

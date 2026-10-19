@@ -6,7 +6,7 @@ public class Main {
 
         // 1. Registrar cliente y mascota
         Cliente cliente1 = new Cliente("C001", "Carlos Gomez", "5544-3322", "Zona 10, Ciudad");
-        Mascota mascota1 = new Mascota("M001", "Max", "Perro", "Golden Retriever", 2);
+        Mascota mascota1 = new Mascota("M001", "Max", "Perro", "Golden Retriever", "2 años");
         cliente1.agregarMascota(mascota1);
         System.out.println("Cliente y mascota registrados con éxito.");
 

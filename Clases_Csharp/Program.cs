@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SistemaVeterinaria.Datos;
 
 namespace SistemaVeterinaria
 {
@@ -7,26 +8,27 @@ namespace SistemaVeterinaria
     {
         static void Main(string[] args)
         {
-            List<Cliente> clientes = new List<Cliente>();
-            List<Mascota> mascotasGlobal = new List<Mascota>();
-            List<Veterinario> veterinarios = new List<Veterinario>();
-            List<Cita> citas = new List<Cita>();
-            List<Producto> inventario = new List<Producto>();
-            GestorReportes gestorReportes = new GestorReportes();
+            // Crea la base de datos SQLite (si no existe) y carga los datos guardados
+            BaseDatos.Inicializar();
 
-            // Datos por defecto
-            veterinarios.Add(new Veterinario("V001", "Dra. Sofia Morales", "Cirugía y Medicina General"));
-            inventario.Add(new Producto("P001", "Protector Gástrico", 3, 45.00));
-            inventario.Add(new Producto("P002", "Antipulgas", 10, 120.00));
+            List<Veterinario> veterinarios = RepositorioVeterinaria.CargarVeterinarios();
+            List<Producto> inventario = RepositorioVeterinaria.CargarProductos();
+            List<Cliente> clientes = RepositorioVeterinaria.CargarClientes();
+            List<Mascota> mascotasGlobal = RepositorioVeterinaria.CargarMascotas(clientes);
+            List<Cita> citas = RepositorioVeterinaria.CargarCitas(mascotasGlobal, veterinarios);
+            RepositorioVeterinaria.CargarConsultas(mascotasGlobal);
+            GestorReportes gestorReportes = new GestorReportes();
 
             bool salir = false;
 
             while (!salir)
             {
-                Console.Clear();
+                LimpiarPantalla();
                 Console.WriteLine("=========================================");
                 Console.WriteLine("   SISTEMA CLÍNICO VETERINARIO - MENÚ    ");
                 Console.WriteLine("=========================================");
+                Console.WriteLine("📁 Base de datos: veterinaria.db (los datos se guardan al cerrar)");
+                Console.WriteLine("-----------------------------------------");
                 Console.WriteLine("1. Registrar Propietario (Cliente)");
                 Console.WriteLine("2. Registrar Mascota a un Cliente");
                 Console.WriteLine("3. Agendar Cita Médica");
@@ -37,7 +39,13 @@ namespace SistemaVeterinaria
                 Console.WriteLine("8. Salir");
                 Console.Write("\nSeleccione una opción (1-8): ");
 
-                string opcion = Console.ReadLine();
+                string? opcionLeida = Console.ReadLine();
+                if (opcionLeida == null)
+                {
+                    // Se cerró la entrada de la consola (fin de archivo): se sale del sistema
+                    break;
+                }
+                string opcion = opcionLeida;
                 Console.WriteLine();
 
                 switch (opcion)
@@ -45,18 +53,19 @@ namespace SistemaVeterinaria
                     case "1":
                         Console.WriteLine("--- REGISTRO DE PROPIETARIO ---");
 
-                        // ID generado automáticamente por el sistema
-                        string idCliente = "C00" + (clientes.Count + 1);
+                        // ID generado automáticamente por el sistema (correlativo desde la base de datos)
+                        string idCliente = RepositorioVeterinaria.SiguienteId("clientes", "C");
 
                         Console.Write("Nombre completo: ");
-                        string nombreCli = Console.ReadLine();
+                        string nombreCli = Console.ReadLine() ?? "";
                         Console.Write("Teléfono: ");
-                        string telefono = Console.ReadLine();
+                        string telefono = Console.ReadLine() ?? "";
                         Console.Write("Dirección: ");
-                        string direccion = Console.ReadLine();
+                        string direccion = Console.ReadLine() ?? "";
 
                         Cliente nuevoCliente = new Cliente(idCliente, nombreCli, telefono, direccion);
                         clientes.Add(nuevoCliente);
+                        RepositorioVeterinaria.InsertarCliente(nuevoCliente);
 
                         Console.WriteLine($"\n¡Propietario registrado con éxito! (ID asignado: {idCliente})");
                         break;
@@ -76,27 +85,28 @@ namespace SistemaVeterinaria
                         }
 
                         Console.Write("\nIngrese el ID del cliente propietario (ej. C001): ");
-                        string idBuscado = Console.ReadLine();
-                        Cliente clienteEncontrado = clientes.Find(c => c.IdCliente.Equals(idBuscado, StringComparison.OrdinalIgnoreCase));
+                        string idBuscado = Console.ReadLine() ?? "";
+                        Cliente? clienteEncontrado = clientes.Find(c => c.IdCliente.Equals(idBuscado, StringComparison.OrdinalIgnoreCase));
 
                         if (clienteEncontrado != null)
                         {
-                            string idMascota = "M001" + (mascotasGlobal.Count + 1); // o el correlativo que prefieras
+                            string idMascota = RepositorioVeterinaria.SiguienteId("mascotas", "M");
 
                             Console.Write("Nombre de la mascota: ");
-                            string nombreMas = Console.ReadLine();
+                            string nombreMas = Console.ReadLine() ?? "";
                             Console.Write("Especie (Perro/Gato/etc.): ");
-                            string especie = Console.ReadLine();
+                            string especie = Console.ReadLine() ?? "";
                             Console.Write("Raza: ");
-                            string raza = Console.ReadLine();
+                            string raza = Console.ReadLine() ?? "";
 
-                            // AQUÍ ESTÁ EL CAMBIO: Recibe texto libre para admitir "6 meses", "1 año", etc.
+                            // Texto libre para admitir "6 meses", "1 año", etc.
                             Console.Write("Edad (ej. '6 meses' o '2 años'): ");
-                            string edad = Console.ReadLine();
+                            string edad = Console.ReadLine() ?? "";
 
                             Mascota nuevaMascota = new Mascota(idMascota, nombreMas, especie, raza, edad);
                             clienteEncontrado.AgregarMascota(nuevaMascota);
                             mascotasGlobal.Add(nuevaMascota);
+                            RepositorioVeterinaria.InsertarMascota(nuevaMascota, clienteEncontrado.IdCliente);
 
                             Console.WriteLine($"\n¡Mascota '{nombreMas}' vinculada exitosamente a {clienteEncontrado.Nombre}! (ID asignado: {idMascota})");
                         }
@@ -113,12 +123,17 @@ namespace SistemaVeterinaria
                             Console.WriteLine("⚠️ No hay mascotas registradas en el sistema.");
                             break;
                         }
+                        if (veterinarios.Count == 0)
+                        {
+                            Console.WriteLine("⚠️ No hay veterinarios registrados en el sistema.");
+                            break;
+                        }
 
-                        string idCita = "CIT-00" + (citas.Count + 1);
+                        string idCita = RepositorioVeterinaria.SiguienteId("citas", "CIT-");
                         Console.Write("Fecha de la cita (DD/MM/AAAA): ");
-                        string fechaCita = Console.ReadLine();
+                        string fechaCita = Console.ReadLine() ?? "";
                         Console.Write("Hora (ej. 10:30 AM): ");
-                        string horaCita = Console.ReadLine();
+                        string horaCita = Console.ReadLine() ?? "";
 
                         Console.WriteLine("\nMascotas disponibles:");
                         foreach (var m in mascotasGlobal)
@@ -126,14 +141,15 @@ namespace SistemaVeterinaria
                             Console.WriteLine($"- ID: {m.IdMascota} | Nombre: {m.Nombre} ({m.Especie})");
                         }
                         Console.Write("Ingrese el ID de la mascota: ");
-                        string idMasCita = Console.ReadLine();
-                        Mascota mascotaCita = mascotasGlobal.Find(m => m.IdMascota.Equals(idMasCita, StringComparison.OrdinalIgnoreCase));
+                        string idMasCita = Console.ReadLine() ?? "";
+                        Mascota? mascotaCita = mascotasGlobal.Find(m => m.IdMascota.Equals(idMasCita, StringComparison.OrdinalIgnoreCase));
 
                         if (mascotaCita != null)
                         {
                             Veterinario vetAsignado = veterinarios[0]; // Veterinario por defecto
                             Cita nuevaCita = new Cita(idCita, fechaCita, horaCita, mascotaCita, vetAsignado);
                             citas.Add(nuevaCita);
+                            RepositorioVeterinaria.InsertarCita(nuevaCita);
                             Console.WriteLine($"\n¡Cita agendada con éxito! (ID asignado: {idCita})");
                         }
                         else
@@ -156,39 +172,57 @@ namespace SistemaVeterinaria
                             Console.WriteLine($"- ID: {m.IdMascota} | Nombre: {m.Nombre}");
                         }
                         Console.Write("Ingrese el ID de la mascota a atender: ");
-                        string idMasCons = Console.ReadLine();
-                        Mascota mascotaAtencion = mascotasGlobal.Find(m => m.IdMascota.Equals(idMasCons, StringComparison.OrdinalIgnoreCase));
+                        string idMasCons = Console.ReadLine() ?? "";
+                        Mascota? mascotaAtencion = mascotasGlobal.Find(m => m.IdMascota.Equals(idMasCons, StringComparison.OrdinalIgnoreCase));
 
                         if (mascotaAtencion != null)
                         {
-                            string idCons = "CONS-00" + (mascotaAtencion.HistorialClinico.Count + 1);
+                            string idCons = RepositorioVeterinaria.SiguienteId("consultas", "CONS-");
+
                             Console.Write("Fecha de hoy: ");
-                            string fechaCons = Console.ReadLine();
-                            Console.Write("Peso (kg): ");
-                            double peso = double.Parse(Console.ReadLine());
-                            Console.Write("Temperatura (°C): ");
-                            double temp = double.Parse(Console.ReadLine());
+                            string fechaCons = Console.ReadLine() ?? "";
+
+                            // Validación de números con re-intento (evita crash con texto vacío o inválido)
+                            double peso;
+                            while (true)
+                            {
+                                Console.Write("Peso (kg): ");
+                                if (double.TryParse(Console.ReadLine(), out peso) && peso > 0)
+                                    break;
+                                Console.WriteLine("❌ Peso no válido. Ingrese un número mayor a cero (ej. 12.5).");
+                            }
+
+                            double temp;
+                            while (true)
+                            {
+                                Console.Write("Temperatura (°C): ");
+                                if (double.TryParse(Console.ReadLine(), out temp) && temp > 0)
+                                    break;
+                                Console.WriteLine("❌ Temperatura no válida. Ingrese un número mayor a cero (ej. 38.5).");
+                            }
+
                             Console.Write("Síntomas: ");
-                            string sintomas = Console.ReadLine();
+                            string sintomas = Console.ReadLine() ?? "";
                             Console.Write("Diagnóstico: ");
-                            string diagnostico = Console.ReadLine();
+                            string diagnostico = Console.ReadLine() ?? "";
 
                             Console.Write("¿Requiere medicamentos o receta? (s/n): ");
-                            string recetaReq = Console.ReadLine();
+                            string recetaReq = Console.ReadLine() ?? "";
                             string farmaco = "", dosis = "", frecuencia = "";
 
                             if (recetaReq.ToLower() == "s")
                             {
                                 Console.Write("Nombre del fármaco: ");
-                                farmaco = Console.ReadLine();
+                                farmaco = Console.ReadLine() ?? "";
                                 Console.Write("Dosis: ");
-                                dosis = Console.ReadLine();
+                                dosis = Console.ReadLine() ?? "";
                                 Console.Write("Frecuencia: ");
-                                frecuencia = Console.ReadLine();
+                                frecuencia = Console.ReadLine() ?? "";
                             }
 
                             Consulta nuevaConsulta = new Consulta(idCons, fechaCons, peso, temp, sintomas, diagnostico, farmaco, dosis, frecuencia);
                             mascotaAtencion.AgregarConsulta(nuevaConsulta);
+                            RepositorioVeterinaria.InsertarConsulta(nuevaConsulta, mascotaAtencion.IdMascota);
 
                             Console.WriteLine("\n¡Consulta registrada y guardada en el historial clínico de la mascota!");
                         }
@@ -201,8 +235,8 @@ namespace SistemaVeterinaria
                     case "5":
                         Console.WriteLine("--- CONSULTAR HISTORIAL CLÍNICO ---");
                         Console.Write("Ingrese el ID de la mascota (ej. M001): ");
-                        string idHistorial = Console.ReadLine();
-                        Mascota masHistorial = mascotasGlobal.Find(m => m.IdMascota.Equals(idHistorial, StringComparison.OrdinalIgnoreCase));
+                        string idHistorial = Console.ReadLine() ?? "";
+                        Mascota? masHistorial = mascotasGlobal.Find(m => m.IdMascota.Equals(idHistorial, StringComparison.OrdinalIgnoreCase));
 
                         if (masHistorial != null)
                         {
@@ -234,16 +268,24 @@ namespace SistemaVeterinaria
                             Console.WriteLine($"- [{p.IdProducto}] {p.Nombre} | Stock: {p.CantidadStock} | Precio: Q{p.PrecioUnitario}");
                         }
                         Console.Write("\n¿Desea reabastecer algún producto? (s/n): ");
-                        if (Console.ReadLine().ToLower() == "s")
+                        if ((Console.ReadLine() ?? "").ToLower() == "s")
                         {
                             Console.Write("Ingrese el ID del producto (ej. P001): ");
-                            string idProd = Console.ReadLine();
-                            Producto prodEncontrado = inventario.Find(p => p.IdProducto.Equals(idProd, StringComparison.OrdinalIgnoreCase));
+                            string idProd = Console.ReadLine() ?? "";
+                            Producto? prodEncontrado = inventario.Find(p => p.IdProducto.Equals(idProd, StringComparison.OrdinalIgnoreCase));
                             if (prodEncontrado != null)
                             {
-                                Console.Write("Cantidad a sumar al stock: ");
-                                int cant = int.Parse(Console.ReadLine());
+                                int cant;
+                                while (true)
+                                {
+                                    Console.Write("Cantidad a sumar al stock: ");
+                                    if (int.TryParse(Console.ReadLine(), out cant) && cant > 0)
+                                        break;
+                                    Console.WriteLine("❌ Cantidad no válida. Ingrese un número entero mayor a cero.");
+                                }
+
                                 prodEncontrado.Reabastecer(cant);
+                                RepositorioVeterinaria.ActualizarStock(prodEncontrado.IdProducto, cant);
                                 Console.WriteLine("¡Stock actualizado con éxito!");
                             }
                             else
@@ -272,9 +314,33 @@ namespace SistemaVeterinaria
 
                 if (!salir)
                 {
-                    Console.Write("\nPresione cualquier tecla para regresar al menú...");
-                    Console.ReadKey();
+                    if (Console.IsInputRedirected)
+                    {
+                        // Entrada redirigida (pruebas automáticas): no hay tecla que esperar
+                        Console.WriteLine();
+                    }
+                    else
+                    {
+                        Console.Write("\nPresione cualquier tecla para regresar al menú...");
+                        Console.ReadKey();
+                    }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Limpia la pantalla sin crashear si la consola no lo permite
+        /// (por ejemplo, cuando la salida está redirigida en pruebas).
+        /// </summary>
+        static void LimpiarPantalla()
+        {
+            try
+            {
+                Console.Clear();
+            }
+            catch (IOException)
+            {
+                // La consola no soporta limpiar la pantalla; se continúa normalmente
             }
         }
     }

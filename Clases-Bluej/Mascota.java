@@ -5,10 +5,10 @@ public class Mascota {
     private String nombre;
     private String especie;
     private String raza;
-    private int edad;
+    private String edad;
     private ArrayList<Consulta> historialClinico;
 
-    public Mascota(String idMascota, String nombre, String especie, String raza, int edad) {
+    public Mascota(String idMascota, String nombre, String especie, String raza, String edad) {
         this.idMascota = idMascota;
         this.nombre = nombre;
         this.especie = especie;
@@ -25,6 +25,6 @@ public class Mascota {
     public String getNombre() { return nombre; }
     public String getEspecie() { return especie; }
     public String getRaza() { return raza; }
-    public int getEdad() { return edad; }
+    public String getEdad() { return edad; }
     public ArrayList<Consulta> getHistorialClinico() { return historialClinico; }
 }

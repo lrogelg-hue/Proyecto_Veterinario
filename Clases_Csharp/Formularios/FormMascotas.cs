@@ -118,7 +118,7 @@ namespace SistemaVeterinaria.Formularios
             }
             try
             {
-                string id = RepositorioVeterinaria.SiguienteId("mascotas", "M");
+                string id = RepositorioVeterinaria.SiguienteId("pacientes", "M");
                 Mascota nueva = new Mascota(id, txtNombre.Text.Trim(), txtEspecie.Text.Trim(),
                                             txtRaza.Text.Trim(), txtEdad.Text.Trim());
                 RepositorioVeterinaria.InsertarMascota(nueva, dueno.IdCliente);

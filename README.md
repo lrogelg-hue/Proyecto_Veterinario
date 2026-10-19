@@ -11,7 +11,7 @@ Sistema orientado a objetos para la gestión integral de una clínica veterinari
 - **Consulta Médica e Historial Clínico:** Registro detallado de peso, temperatura, síntomas, diagnósticos y recetas médicas guardadas en el expediente del paciente.
 - **Gestión de Inventario:** Control de stock de medicamentos e insumos con opciones de reabastecimiento.
 - **Generación de Reportes:** Informes consolidados de citas y productos con existencias bajas.
-- **Persistencia de Datos (SQLite):** Toda la información se guarda en una base de datos local (`veterinaria.db`), creada automáticamente la primera vez que se ejecuta el programa. Los datos **no se pierden al cerrar la aplicación**.
+- **Persistencia de Datos (SQLite):** Toda la información se guarda en una base de datos local (`veterinaria.db`), creada automáticamente la primera vez que se ejecuta el programa, con las tablas `clientes`, `pacientes`, `veterinarios`, `citas`, `consultas` y `productos`. Los datos **no se pierden al cerrar la aplicación**.
 - **Interfaz Gráfica (Windows Forms):** Además del menú de consola, el sistema incluye una interfaz gráfica con tablas (`DataGridView`) para trabajar los mismos datos de forma visual (opción `0` del menú).
 - **CRUD completo:** Alta, consulta, actualización y baja de clientes, mascotas, citas, consultas e inventario, con SQL parametrizado y borrado en cascada del historial clínico.
 - **Validaciones y manejo de errores:** Campos obligatorios, formato de fecha `DD/MM/AAAA`, números positivos para peso/temperatura/stock/precio, confirmación de eliminaciones y manejo de excepciones con mensajes al usuario.

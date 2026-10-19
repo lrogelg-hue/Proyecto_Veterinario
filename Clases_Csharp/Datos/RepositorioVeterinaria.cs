@@ -15,7 +15,7 @@ namespace SistemaVeterinaria.Datos
 
         /// <summary>
         /// Devuelve el siguiente ID con formato de 3 dígitos, por ejemplo:
-        /// clientes -> "C001", mascotas -> "M001", citas -> "CIT-001".
+        /// clientes -> "C001", pacientes -> "M001", citas -> "CIT-001".
         /// El número se calcula a partir del ID más alto existente en la tabla,
         /// por lo que siempre queda único aunque se registren muchos registros.
         /// (El nombre de la tabla proviene de las constantes de esta clase, no del usuario.)
@@ -73,7 +73,7 @@ namespace SistemaVeterinaria.Datos
             using (SqliteCommand cmd = conexion.CreateCommand())
             {
                 cmd.CommandText = @"
-                    INSERT INTO mascotas (id, nombre, especie, raza, edad, id_cliente)
+                    INSERT INTO pacientes (id, nombre, especie, raza, edad, id_cliente)
                     VALUES (@id, @nombre, @especie, @raza, @edad, @id_cliente);";
                 cmd.Parameters.AddWithValue("@id", mascota.IdMascota);
                 cmd.Parameters.AddWithValue("@nombre", mascota.Nombre);
@@ -186,7 +186,7 @@ namespace SistemaVeterinaria.Datos
             using (SqliteConnection conexion = BaseDatos.AbrirConexion())
             using (SqliteCommand cmd = conexion.CreateCommand())
             {
-                cmd.CommandText = @"UPDATE mascotas SET nombre = @nombre, especie = @especie,
+                cmd.CommandText = @"UPDATE pacientes SET nombre = @nombre, especie = @especie,
                                     raza = @raza, edad = @edad, id_cliente = @id_cliente WHERE id = @id;";
                 cmd.Parameters.AddWithValue("@id", mascota.IdMascota);
                 cmd.Parameters.AddWithValue("@nombre", mascota.Nombre);
@@ -265,7 +265,7 @@ namespace SistemaVeterinaria.Datos
             using (SqliteConnection conexion = BaseDatos.AbrirConexion())
             using (SqliteCommand cmd = conexion.CreateCommand())
             {
-                cmd.CommandText = "SELECT COUNT(*) FROM mascotas WHERE id_cliente = @id;";
+                cmd.CommandText = "SELECT COUNT(*) FROM pacientes WHERE id_cliente = @id;";
                 cmd.Parameters.AddWithValue("@id", id);
                 if ((long)cmd.ExecuteScalar()! > 0) return false;
 
@@ -293,7 +293,7 @@ namespace SistemaVeterinaria.Datos
                     cmd.ExecuteNonQuery();
                     cmd.CommandText = "DELETE FROM citas WHERE id_mascota = @id;";
                     cmd.ExecuteNonQuery();
-                    cmd.CommandText = "DELETE FROM mascotas WHERE id = @id;";
+                    cmd.CommandText = "DELETE FROM pacientes WHERE id = @id;";
                     cmd.ExecuteNonQuery();
                 }
                 transaccion.Commit();
@@ -454,7 +454,7 @@ namespace SistemaVeterinaria.Datos
             using (SqliteConnection conexion = BaseDatos.AbrirConexion())
             using (SqliteCommand cmd = conexion.CreateCommand())
             {
-                cmd.CommandText = "SELECT id, nombre, especie, raza, edad, id_cliente FROM mascotas;";
+                cmd.CommandText = "SELECT id, nombre, especie, raza, edad, id_cliente FROM pacientes;";
 
                 using (SqliteDataReader lector = cmd.ExecuteReader())
                 {

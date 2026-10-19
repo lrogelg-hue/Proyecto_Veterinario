@@ -58,7 +58,7 @@ namespace SistemaVeterinaria.Datos
                 direccion TEXT NOT NULL
             );
 
-            CREATE TABLE IF NOT EXISTS mascotas (
+            CREATE TABLE IF NOT EXISTS pacientes (
                 id         TEXT PRIMARY KEY,
                 nombre     TEXT NOT NULL,
                 especie    TEXT NOT NULL,
@@ -80,7 +80,7 @@ namespace SistemaVeterinaria.Datos
                 hora           TEXT NOT NULL,
                 id_mascota     TEXT NOT NULL,
                 id_veterinario TEXT NOT NULL,
-                FOREIGN KEY (id_mascota)     REFERENCES mascotas(id),
+                FOREIGN KEY (id_mascota)     REFERENCES pacientes(id),
                 FOREIGN KEY (id_veterinario) REFERENCES veterinarios(id)
             );
 
@@ -95,7 +95,7 @@ namespace SistemaVeterinaria.Datos
                 farmaco      TEXT NOT NULL,
                 dosis        TEXT NOT NULL,
                 frecuencia   TEXT NOT NULL,
-                FOREIGN KEY (id_mascota) REFERENCES mascotas(id)
+                FOREIGN KEY (id_mascota) REFERENCES pacientes(id)
             );
 
             CREATE TABLE IF NOT EXISTS productos (

@@ -99,7 +99,7 @@ namespace SistemaVeterinaria
 
                             if (clienteEncontrado != null)
                             {
-                                string idMascota = RepositorioVeterinaria.SiguienteId("mascotas", "M");
+                                string idMascota = RepositorioVeterinaria.SiguienteId("pacientes", "M");
 
                                 string nombreMas = LeerTextoObligatorio("Nombre de la mascota: ");
                                 string especie = LeerTextoObligatorio("Especie (Perro/Gato/etc.): ");

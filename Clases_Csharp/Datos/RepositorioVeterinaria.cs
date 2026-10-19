@@ -119,9 +119,9 @@ namespace SistemaVeterinaria.Datos
                 cmd.Parameters.AddWithValue("@temperatura", consulta.Temperatura);
                 cmd.Parameters.AddWithValue("@sintomas", consulta.Sintomas);
                 cmd.Parameters.AddWithValue("@diagnostico", consulta.Diagnostico);
-                cmd.Parameters.AddWithValue("@farmaco", consulta.Farmaco ?? "");
-                cmd.Parameters.AddWithValue("@dosis", consulta.Dosis ?? "");
-                cmd.Parameters.AddWithValue("@frecuencia", consulta.Frecuencia ?? "");
+                cmd.Parameters.AddWithValue("@farmaco", consulta.Farmaco);
+                cmd.Parameters.AddWithValue("@dosis", consulta.Dosis);
+                cmd.Parameters.AddWithValue("@frecuencia", consulta.Frecuencia);
                 cmd.ExecuteNonQuery();
             }
         }
@@ -137,6 +137,231 @@ namespace SistemaVeterinaria.Datos
                 cmd.CommandText = "UPDATE productos SET stock = stock + @cantidad WHERE id = @id;";
                 cmd.Parameters.AddWithValue("@cantidad", cantidad);
                 cmd.Parameters.AddWithValue("@id", idProducto);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        // ---------------------------------------------------------------
+        // BÚSQUEDA INDIVIDUAL (para editar desde los formularios)
+        // ---------------------------------------------------------------
+
+        public static Cliente? BuscarCliente(string id)
+        {
+            using (SqliteConnection conexion = BaseDatos.AbrirConexion())
+            using (SqliteCommand cmd = conexion.CreateCommand())
+            {
+                cmd.CommandText = "SELECT id, nombre, telefono, direccion FROM clientes WHERE id = @id;";
+                cmd.Parameters.AddWithValue("@id", id);
+                using (SqliteDataReader lector = cmd.ExecuteReader())
+                {
+                    if (lector.Read())
+                        return new Cliente(lector.GetString(0), lector.GetString(1),
+                                           lector.GetString(2), lector.GetString(3));
+                }
+            }
+            return null;
+        }
+
+        // ---------------------------------------------------------------
+        // ACTUALIZACIONES (UPDATE)
+        // ---------------------------------------------------------------
+
+        public static void ActualizarCliente(Cliente cliente)
+        {
+            using (SqliteConnection conexion = BaseDatos.AbrirConexion())
+            using (SqliteCommand cmd = conexion.CreateCommand())
+            {
+                cmd.CommandText = @"UPDATE clientes SET nombre = @nombre, telefono = @telefono,
+                                    direccion = @direccion WHERE id = @id;";
+                cmd.Parameters.AddWithValue("@id", cliente.IdCliente);
+                cmd.Parameters.AddWithValue("@nombre", cliente.Nombre);
+                cmd.Parameters.AddWithValue("@telefono", cliente.Telefono);
+                cmd.Parameters.AddWithValue("@direccion", cliente.Direccion);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public static void ActualizarMascota(Mascota mascota, string idCliente)
+        {
+            using (SqliteConnection conexion = BaseDatos.AbrirConexion())
+            using (SqliteCommand cmd = conexion.CreateCommand())
+            {
+                cmd.CommandText = @"UPDATE mascotas SET nombre = @nombre, especie = @especie,
+                                    raza = @raza, edad = @edad, id_cliente = @id_cliente WHERE id = @id;";
+                cmd.Parameters.AddWithValue("@id", mascota.IdMascota);
+                cmd.Parameters.AddWithValue("@nombre", mascota.Nombre);
+                cmd.Parameters.AddWithValue("@especie", mascota.Especie);
+                cmd.Parameters.AddWithValue("@raza", mascota.Raza);
+                cmd.Parameters.AddWithValue("@edad", mascota.Edad);
+                cmd.Parameters.AddWithValue("@id_cliente", idCliente);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public static void ActualizarCita(Cita cita)
+        {
+            using (SqliteConnection conexion = BaseDatos.AbrirConexion())
+            using (SqliteCommand cmd = conexion.CreateCommand())
+            {
+                cmd.CommandText = @"UPDATE citas SET fecha = @fecha, hora = @hora,
+                                    id_mascota = @id_mascota, id_veterinario = @id_veterinario
+                                    WHERE id = @id;";
+                cmd.Parameters.AddWithValue("@id", cita.IdCita);
+                cmd.Parameters.AddWithValue("@fecha", cita.Fecha);
+                cmd.Parameters.AddWithValue("@hora", cita.Hora);
+                cmd.Parameters.AddWithValue("@id_mascota", cita.Mascota.IdMascota);
+                cmd.Parameters.AddWithValue("@id_veterinario", cita.Veterinario.IdVeterinario);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public static void ActualizarConsulta(Consulta consulta, string idMascota)
+        {
+            using (SqliteConnection conexion = BaseDatos.AbrirConexion())
+            using (SqliteCommand cmd = conexion.CreateCommand())
+            {
+                cmd.CommandText = @"UPDATE consultas SET id_mascota = @id_mascota, fecha = @fecha,
+                                    peso = @peso, temperatura = @temperatura, sintomas = @sintomas,
+                                    diagnostico = @diagnostico, farmaco = @farmaco, dosis = @dosis,
+                                    frecuencia = @frecuencia WHERE id = @id;";
+                cmd.Parameters.AddWithValue("@id", consulta.IdConsulta);
+                cmd.Parameters.AddWithValue("@id_mascota", idMascota);
+                cmd.Parameters.AddWithValue("@fecha", consulta.Fecha);
+                cmd.Parameters.AddWithValue("@peso", consulta.Peso);
+                cmd.Parameters.AddWithValue("@temperatura", consulta.Temperatura);
+                cmd.Parameters.AddWithValue("@sintomas", consulta.Sintomas);
+                cmd.Parameters.AddWithValue("@diagnostico", consulta.Diagnostico);
+                cmd.Parameters.AddWithValue("@farmaco", consulta.Farmaco);
+                cmd.Parameters.AddWithValue("@dosis", consulta.Dosis);
+                cmd.Parameters.AddWithValue("@frecuencia", consulta.Frecuencia);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public static void ActualizarProducto(Producto producto)
+        {
+            using (SqliteConnection conexion = BaseDatos.AbrirConexion())
+            using (SqliteCommand cmd = conexion.CreateCommand())
+            {
+                cmd.CommandText = @"UPDATE productos SET nombre = @nombre, stock = @stock,
+                                    precio = @precio WHERE id = @id;";
+                cmd.Parameters.AddWithValue("@id", producto.IdProducto);
+                cmd.Parameters.AddWithValue("@nombre", producto.Nombre);
+                cmd.Parameters.AddWithValue("@stock", producto.CantidadStock);
+                cmd.Parameters.AddWithValue("@precio", producto.PrecioUnitario);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        // ---------------------------------------------------------------
+        // ELIMINACIONES (DELETE)
+        // ---------------------------------------------------------------
+
+        /// <summary>
+        /// Elimina un cliente. Devuelve false si aún tiene mascotas registradas.
+        /// </summary>
+        public static bool EliminarCliente(string id)
+        {
+            using (SqliteConnection conexion = BaseDatos.AbrirConexion())
+            using (SqliteCommand cmd = conexion.CreateCommand())
+            {
+                cmd.CommandText = "SELECT COUNT(*) FROM mascotas WHERE id_cliente = @id;";
+                cmd.Parameters.AddWithValue("@id", id);
+                if ((long)cmd.ExecuteScalar()! > 0) return false;
+
+                cmd.CommandText = "DELETE FROM clientes WHERE id = @id;";
+                cmd.ExecuteNonQuery();
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Elimina una mascota junto con su historial clínico y sus citas (en cascada,
+        /// dentro de una transacción: si algo falla, no se borra nada).
+        /// </summary>
+        public static void EliminarMascota(string id)
+        {
+            using (SqliteConnection conexion = BaseDatos.AbrirConexion())
+            using (SqliteTransaction transaccion = conexion.BeginTransaction())
+            {
+                using (SqliteCommand cmd = conexion.CreateCommand())
+                {
+                    cmd.Transaction = transaccion;
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    cmd.CommandText = "DELETE FROM consultas WHERE id_mascota = @id;";
+                    cmd.ExecuteNonQuery();
+                    cmd.CommandText = "DELETE FROM citas WHERE id_mascota = @id;";
+                    cmd.ExecuteNonQuery();
+                    cmd.CommandText = "DELETE FROM mascotas WHERE id = @id;";
+                    cmd.ExecuteNonQuery();
+                }
+                transaccion.Commit();
+            }
+        }
+
+        public static void EliminarCita(string id)
+        {
+            using (SqliteConnection conexion = BaseDatos.AbrirConexion())
+            using (SqliteCommand cmd = conexion.CreateCommand())
+            {
+                cmd.CommandText = "DELETE FROM citas WHERE id = @id;";
+                cmd.Parameters.AddWithValue("@id", id);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public static void EliminarConsulta(string id)
+        {
+            using (SqliteConnection conexion = BaseDatos.AbrirConexion())
+            using (SqliteCommand cmd = conexion.CreateCommand())
+            {
+                cmd.CommandText = "DELETE FROM consultas WHERE id = @id;";
+                cmd.Parameters.AddWithValue("@id", id);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public static void EliminarProducto(string id)
+        {
+            using (SqliteConnection conexion = BaseDatos.AbrirConexion())
+            using (SqliteCommand cmd = conexion.CreateCommand())
+            {
+                cmd.CommandText = "DELETE FROM productos WHERE id = @id;";
+                cmd.Parameters.AddWithValue("@id", id);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        // ---------------------------------------------------------------
+        // INSERCIONES ADICIONALES (desde los formularios)
+        // ---------------------------------------------------------------
+
+        public static void InsertarProducto(Producto producto)
+        {
+            using (SqliteConnection conexion = BaseDatos.AbrirConexion())
+            using (SqliteCommand cmd = conexion.CreateCommand())
+            {
+                cmd.CommandText = @"INSERT INTO productos (id, nombre, stock, precio)
+                                    VALUES (@id, @nombre, @stock, @precio);";
+                cmd.Parameters.AddWithValue("@id", producto.IdProducto);
+                cmd.Parameters.AddWithValue("@nombre", producto.Nombre);
+                cmd.Parameters.AddWithValue("@stock", producto.CantidadStock);
+                cmd.Parameters.AddWithValue("@precio", producto.PrecioUnitario);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public static void InsertarVeterinario(Veterinario veterinario)
+        {
+            using (SqliteConnection conexion = BaseDatos.AbrirConexion())
+            using (SqliteCommand cmd = conexion.CreateCommand())
+            {
+                cmd.CommandText = @"INSERT INTO veterinarios (id, nombre, especialidad)
+                                    VALUES (@id, @nombre, @especialidad);";
+                cmd.Parameters.AddWithValue("@id", veterinario.IdVeterinario);
+                cmd.Parameters.AddWithValue("@nombre", veterinario.Nombre);
+                cmd.Parameters.AddWithValue("@especialidad", veterinario.Especialidad);
                 cmd.ExecuteNonQuery();
             }
         }
